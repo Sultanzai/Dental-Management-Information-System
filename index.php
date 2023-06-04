@@ -156,9 +156,9 @@
 
           //While loop to read database data
           while($row = $resutl->fetch_assoc()){
-              $id = intval($row['P_ID']);
+              $id = $row["P_ID"];
             echo " 
-            <a href='invoice.php?newid=$id'> 
+            <a href='invoice.php?id=$id'> 
             <div class= products-row>
               <button class= .cell-more-button>
               </button>

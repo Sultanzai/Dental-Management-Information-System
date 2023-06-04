@@ -8,7 +8,7 @@
   // Create Connection
   $con = new mysqli($servername, $userName, $password, $database);
   
-    $id=$_GET['newid'];
+    $id=$_GET["id"];
     echo "Id found:".$id;
 
   $payment = "";

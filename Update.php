@@ -14,9 +14,9 @@
 
   $userdata = $_SESSION['userdata'];
 
+  $clicked_value = "" ;
 
-
-  $maxres ="empty";
+  $maxres ="";
 
   $id = $userdata['id'];
   $name =$userdata['name'];
