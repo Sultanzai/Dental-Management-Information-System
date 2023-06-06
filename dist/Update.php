@@ -5,33 +5,33 @@
   $password = "";
   $database = "dms";
 
+  
   // Create Connection
   $con = new mysqli($servername, $userName, $password, $database);
 
+ // Accessing Data of a session
+  session_start();
+
+  $userdata = $_SESSION['userdata'];
+
+  $clicked_value = "" ;
+
+  $maxres ="";
+
+  $id = $userdata['newid'];
+  $name =$userdata['name'];
+  $sname = $userdata['sname'];
+  $phone = $userdata['phone'];
+  $address = $userdata['address'];
+  $note = $userdata['note'];
+  $treatmentName =$userdata['treatment'];
+  $total =$userdata['total'];
+  $recevid = $userdata['recived'];
   
-
-  
-  $maxres ="empty";
-
-  $name ="";
-  $sname = "";
-  $gender ="";
-  $age = "";
-  $phone = "";
-  $address = "";
-  $note = "";
-  $treatmentName ="....";
-  $total ="0";
-  $recevid = "0";
-
   $errormessage ="";
   $success="";
-  
+  $currentDate = date('Y-m-d');
  
-  $sqlId = "SELECT MAX(P_ID) AS maxid FROM tbl_patient;";
-  $max = $con->query($sqlId);
-
-
 
   // Check if a value has been clicked
   if (isset($_GET['value'])) {
@@ -54,23 +54,11 @@
     }
   }
 
-  
-  
-  if ($max->num_rows > 0) {
-    // Get the maximum ID from the result set
-    $row = $max->fetch_assoc();
-    $maxres = $row["maxid"];
-    $maxres = $maxres+1;
-    } else {
-        echo "Max ID not Selected";
-    }
 
   // Using POST server request method 
   if($_SERVER['REQUEST_METHOD'] == 'POST'){
     $name = $_POST["name"];
     $sname = $_POST["sname"];
-    $gender = $_POST["gender"];
-    $age = $_POST["age"];
     $phone = $_POST["phone"];
     $address = $_POST["address"];
     $note = $_POST["note"];
@@ -79,18 +67,18 @@
   
 
       do {
-        if(empty($name) || empty($phone) || empty($treatmentName) ){
+        if(empty($name) || empty($phone) || empty($address) ||empty($sname)){
           $errormessage="All the field are Required";
           break;
         }
 
-        // INSERT INTO Patient Table 
-        $sql = "INSERT INTO `tbl_patient`( `P_Name`, `P_SName`,  `P_Gender`, `P_Age`, `P_Phone`, `P_Address`,  `P_Note`, `U_ID`, `PT_ID`) VALUES
-        ('$name', '$sname', '$gender','$age','$phone','$address','$note', 1 , '$clicked_value' );";
+        // Update Patient Table 
+        $sql = "UPDATE `tbl_patient` SET `P_Name`='$name',`P_SName`='$sname',`P_Phone`='$phone',`P_Address`='$address',`P_RegDate`='$currentDate',`P_Note`='$note',
+        `U_ID`='1',`PT_ID` ='$clicked_value' WHERE `P_ID`='$id'";
         $res = $con->query($sql);
 
-        $newsql = "INSERT INTO `tbl_patient_balance`(`PB_Total`, `PB_Receive`, `U_ID`, `P_ID`) 
-        VALUES ('$total','$recevid','1','$maxres');";
+        //Update paitent balance
+        $newsql = "UPDATE `tbl_patient_balance` SET `PB_Total`='$total',`PB_Receive`='$recevid',`PB_ReceiveDate`='$currentDate',`U_ID`='1' WHERE `P_ID`='$id'";
         $res2 = $con->query($newsql);
 
         if(!$res){
@@ -109,14 +97,22 @@
           $recevid = "";
 
           $success = "patient Registed";
-
+          echo "
+          <script> 
+            alert(Data Update Successfuly);
+          </script>
+            ";
           header("location: /DMS/dist/index.php");
 
       } while (false);
 
     }
 
+
+
 ?>
+
+
 
 
 <!DOCTYPE html>
@@ -229,24 +225,6 @@
 
             <div class="row">
               <div class="col-md-4">
-                <h4>Gender </h4>
-              </div>
-              <div class="col-md-8">
-                <input type="text" name = "gender" value="<?php echo $gender; ?>">
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-md-4">
-                <h4>Age </h4>
-              </div>
-              <div class="col-md-8">
-                <input type="text" name ="age" value="<?php echo $age?>">
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-md-4">
                 <h4>Phone </h4>
               </div>
               <div class="col-md-8">
@@ -286,6 +264,7 @@
             <h3>Treatments</h3>
             <ul id="UI">
               <?php
+
                 // Example data
                 $data = array('CBC', 'BBD', 'ADS', 'CLN');
 
@@ -326,7 +305,7 @@
           </div>
           <div class="col-md-5">
             <div class="row"><?php echo '<h5> Total: '.$total. '</h5>' ?></div>
-            <div class="row"><h5> Recived:   </h5> <input style="margin-left: 15px; padding: 0; " type="text" name="recevid"> </div>
+            <div class="row"><h5> Recived:   </h5> <input style="margin-left: 15px; padding: 0; " type="text" name="recevid" value="<?php echo"$recevid"; ?>"> </div>
 
             <div class="row">
               <div class="col-md-6">

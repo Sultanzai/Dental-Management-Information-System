@@ -1,3 +1,7 @@
+<?php
+    session_start(); 
+?>
+
 <!DOCTYPE html>
 <html lang="en" >
 <head>
@@ -24,7 +28,7 @@
     <!-- Left Links -->
     <ul class="sidebar-list">
       <li class="sidebar-list-item">
-        <a href="Dashboard.html">
+        <a href="Dashboard.php">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-home"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
           <span>Dashboard</span>
         </a>
@@ -59,9 +63,7 @@
 
     <!--User Profile -->
     <div class="account-info">
-      <div class="account-info-picture">
-        <img src="https://images.unsplash.com/photo-1527736947477-2790e28f3443?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTE2fHx3b21hbnxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=900&q=60" alt="Account">
-      </div>
+
       <div class="account-info-name">Monica G.</div>
       <button class="account-info-more">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-horizontal"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
@@ -76,55 +78,14 @@
     <div class="app-content-header">
       <h1 class="app-content-headerText">Products</h1>
       <button class="mode-switch" title="Switch Theme">
-        <svg class="moon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="24" height="24" viewBox="0 0 24 24">
-          <defs></defs>
-          <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
-        </svg>
+       
       </button>
-      <a href="Registration.html"><button class="app-content-headerButton" id="Registerbtn"> Register Patient</button></a>
+      <a href="Registration.php"><button class="app-content-headerButton" id="Registerbtn"> Register Patient</button></a>
     </div>
-
-
 
     <div class="app-content-actions">
       <input class="search-bar" placeholder="Search..." type="text">
-      <div class="app-content-actions-wrapper">
-        <div class="filter-button-wrapper">
-          <button class="action-button filter jsFilter"><span>Filter</span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-filter"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg></button>
-          <div class="filter-menu">
-            <label>Category</label>
-            <select>
-              <option>All Categories</option>
-              <option>Furniture</option>                     
-              <option>Decoration</option>
-              <option>Kitchen</option>
-              <option>Bathroom</option>
-            </select>
-            <label>Status</label>
-            <select>
-              <option>All Status</option>
-              <option>Active</option>
-              <option>Disabled</option>
-            </select>
-            <div class="filter-menu-buttons">
-              <button class="filter-button reset">
-                Reset
-              </button>
-              <button class="filter-button apply">
-                Apply
-              </button>
-            </div>
-          </div>
-        </div>
-        <button class="action-button list active" title="List View">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-list"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-        </button>
-        <button class="action-button grid" title="Grid View">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-grid"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-        </button>
-      </div>
     </div>
-
     
     <div class="products-area-wrapper tableView">
       <!-- Header Names -->
@@ -135,6 +96,10 @@
             </button>
           </div>
           <div class="product-cell category">Name<button class="sort-button">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 512 512"><path fill="currentColor" d="M496.1 138.3L375.7 17.9c-7.9-7.9-20.6-7.9-28.5 0L226.9 138.3c-7.9 7.9-7.9 20.6 0 28.5 7.9 7.9 20.6 7.9 28.5 0l85.7-85.7v352.8c0 11.3 9.1 20.4 20.4 20.4 11.3 0 20.4-9.1 20.4-20.4V81.1l85.7 85.7c7.9 7.9 20.6 7.9 28.5 0 7.9-7.8 7.9-20.6 0-28.5zM287.1 347.2c-7.9-7.9-20.6-7.9-28.5 0l-85.7 85.7V80.1c0-11.3-9.1-20.4-20.4-20.4-11.3 0-20.4 9.1-20.4 20.4v352.8l-85.7-85.7c-7.9-7.9-20.6-7.9-28.5 0-7.9 7.9-7.9 20.6 0 28.5l120.4 120.4c7.9 7.9 20.6 7.9 28.5 0l120.4-120.4c7.8-7.9 7.8-20.7-.1-28.5z"/></svg>
+            </button>
+          </div>
+          <div class="product-cell category">S/Name<button class="sort-button">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 512 512"><path fill="currentColor" d="M496.1 138.3L375.7 17.9c-7.9-7.9-20.6-7.9-28.5 0L226.9 138.3c-7.9 7.9-7.9 20.6 0 28.5 7.9 7.9 20.6 7.9 28.5 0l85.7-85.7v352.8c0 11.3 9.1 20.4 20.4 20.4 11.3 0 20.4-9.1 20.4-20.4V81.1l85.7 85.7c7.9 7.9 20.6 7.9 28.5 0 7.9-7.8 7.9-20.6 0-28.5zM287.1 347.2c-7.9-7.9-20.6-7.9-28.5 0l-85.7 85.7V80.1c0-11.3-9.1-20.4-20.4-20.4-11.3 0-20.4 9.1-20.4 20.4v352.8l-85.7-85.7c-7.9-7.9-20.6-7.9-28.5 0-7.9 7.9-7.9 20.6 0 28.5l120.4 120.4c7.9 7.9 20.6 7.9 28.5 0l120.4-120.4c7.8-7.9 7.8-20.7-.1-28.5z"/></svg>
             </button>
           </div>
@@ -159,7 +124,7 @@
          
         </div>
 
-
+<form method="get" action="invoice.php"> 
 
 <!----------------------------------------------------------------------------------------
 
@@ -171,7 +136,6 @@
           $userName= "root";
           $password = "";
           $database = "dms";
-
           // Create Connection
           $con = new mysqli($servername, $userName, $password, $database);
 
@@ -188,31 +152,39 @@
           if(!$resutl){
             die("Invalid Query: " . $con->error);
           }
+          
 
           //While loop to read database data
           while($row = $resutl->fetch_assoc()){
-            echo "
+              $id = $row["P_ID"];
+            echo " 
+            <a href=invoice.php?id=$id> 
             <div class= products-row>
-            <button class= .cell-more-button>
-            </button>
-              <div class=product-cell image>
-                <span>$row[P_ID]</span>
-              </div>
-            <div class= product-cell category ><span class= cell-label >Category:</span>$row[P_Name]</div>
-            <div class= product-cell sales ><span class= cell-label >Sales:</span>$row[P_Phone]</div>
-            <div class= product-cell sales ><span class= cell-label >Sales:</span>$row[P_Address]</div>
-            <div class= product-cell sales ><span class= cell-label >Sales:</span>$row[PT_Name]</div>
-            <div class= product-cell sales ><span class= cell-label >Sales:</span>$row[PB_Total]</div>
-            <div class= product-cell stock ><span class= cell-label >Stock:</span>$row[PB_Receive]</div>
-          </div>
+              <button class= .cell-more-button>
+              </button>
+              <table id = 'mytable'> 
+                <div class=product-cell >
+                  <span>$row[P_ID]</span>
+                </div>
+                </a>
+              <div class= product-cell category ><span class= cell-label >Category:</span>$row[P_Name]</div>
+              <div class= product-cell category ><span class= cell-label >Category:</span>$row[P_SName]</div>
+              <div class= product-cell sales ><span class= cell-label >Sales:</span>$row[P_Phone]</div>
+              <div class= product-cell sales ><span class= cell-label >Sales:</span>$row[P_Address]</div>
+              <div class= product-cell sales ><span class= cell-label >Sales:</span>$row[PT_Name]</div>
+              <div class= product-cell sales ><span class= cell-label >Sales:</span>$row[PB_Total]</div>
+              <div class= product-cell stock ><span class= cell-label >Stock:</span>$row[PB_Receive]</div>
+              </table> 
+            </div>
             ";
 
           }
 
-    ?>
+      ?>
+
+</from>
 
     </section>
-
 
     </div>
   </div>

@@ -1,5 +1,5 @@
 <?php
-  
+  session_start();
   $servername = "localhost";
   $userName= "root";
   $password = "";
@@ -8,116 +8,91 @@
   // Create Connection
   $con = new mysqli($servername, $userName, $password, $database);
 
-  
+  $id ="";
 
-  
-  $maxres ="empty";
+  $id = $_GET["id"];
+  echo "ID IS: ".$id;
 
-  $name ="";
-  $sname = "";
-  $gender ="";
-  $age = "";
-  $phone = "";
-  $address = "";
-  $note = "";
-  $treatmentName ="....";
-  $total ="0";
-  $recevid = "0";
-
-  $errormessage ="";
+  $payment = "";
+  $totalpay = "";
+  $errormessage = "";
   $success="";
-  
- 
-  $sqlId = "SELECT MAX(P_ID) AS maxid FROM tbl_patient;";
-  $max = $con->query($sqlId);
 
-
-
-  // Check if a value has been clicked
-  if (isset($_GET['value'])) {
-    $treatmentName = $_GET['value'];
-    if($treatmentName == 'CBC'){
-      $clicked_value = 1 ;
-      $total = 1000 ;
-    }
-    if($treatmentName == 'BBD'){
-      $clicked_value = 2 ;
-      $total = 1500;
-    }
-    if($treatmentName == 'ADS'){
-      $clicked_value = 3 ;
-      $total = 500 ; 
-    }
-    if($treatmentName == 'CLN'){
-      $clicked_value = 4 ;
-      $total = 600;
-    }
+ if($_SERVER['REQUEST_METHOD'] == 'POST'){
+    $payment = $_POST["payment"];
   }
-
-  
-  
-  if ($max->num_rows > 0) {
-    // Get the maximum ID from the result set
-    $row = $max->fetch_assoc();
-    $maxres = $row["maxid"];
-    $maxres = $maxres+1;
-    } else {
-        echo "Max ID not Selected";
-    }
-
-  // Using POST server request method 
-  if($_SERVER['REQUEST_METHOD'] == 'POST'){
-    $name = $_POST["name"];
-    $sname = $_POST["sname"];
-    $gender = $_POST["gender"];
-    $age = $_POST["age"];
-    $phone = $_POST["phone"];
-    $address = $_POST["address"];
-    $note = $_POST["note"];
-    $recevid = $_POST["recevid"];
-
-  
-
-      do {
-        if(empty($name) || empty($phone) || empty($treatmentName) ){
-          $errormessage="All the field are Required";
-          break;
-        }
-
-        // INSERT INTO Patient Table 
-        $sql = "INSERT INTO `tbl_patient`( `P_Name`, `P_SName`,  `P_Gender`, `P_Age`, `P_Phone`, `P_Address`,  `P_Note`, `U_ID`, `PT_ID`) VALUES
-        ('$name', '$sname', '$gender','$age','$phone','$address','$note', 1 , '$clicked_value' );";
+        // SQL query to get Patient By ID 
+        $sql = "SELECT * FROM `view_patient` WHERE `P_ID` =$id";
         $res = $con->query($sql);
 
-        $newsql = "INSERT INTO `tbl_patient_balance`(`PB_Total`, `PB_Receive`, `U_ID`, `P_ID`) 
-        VALUES ('$total','$recevid','1','$maxres');";
-        $res2 = $con->query($newsql);
-
         if(!$res){
-          $errormessage = "invalid Query: ". $con->error;
-          break;
+          die("Invalid Query: " . $con->error);
         }
-          $name ="";
-          $sname ="";
-          $gender ="";
-          $age = "";
-          $phone = "";
-          $address = "";
-          $note = "";
-          $treatmentName ="";
-          $total ="";
-          $recevid = "";
+        else{
+          $success = "Query pass successfuly ";
+        }
+        $row = $res->fetch_assoc();
+        
+        // Remming of the total treatment 
+        $rem = $row['PB_Total'] - $row['PB_Receive'];
 
-          $success = "patient Registed";
+
+        do{
+          if(empty($payment)){
+          $errormessage= "Payment field is empty";
+          break;
+          }
+
+          //Query to insert into payment
+
+
+          if($totalpay>=$row['PB_Receive'] || $payment<0){
+            echo "<script>
+            alert('Invalid Input !');
+          </script>";
+            break;
+          }
+
+          //String conversion and sum of the recive payment 
+          $totalpay = $payment +$row["PB_Receive"];
+
+          if($totalpay >$row['PB_Total']){
+            echo "<script>
+                    alert('Invalid Amount!');
+                  </script>";
+            break;            
+          }
+          else{
+          $newsql = "UPDATE `tbl_patient_balance` SET `PB_Receive`= $totalpay WHERE 'P_ID' =$id";
+          $newres = $con->query($newsql);
+        }      
+            
+          if(!$newres){
+            $errormessage = "invalid Query: ". $con->error;
+            break;
+          }
 
           header("location: /DMS/dist/index.php");
+        }
+        while(false);
 
-      } while (false);
+  // SESSIONS Data and initilizaions 
+  $userdata = array(
+    "newid"=> $id, 
+    "name"=> $row['P_Name'], 
+    "sname"=> $row['P_SName'], 
+    "phone"=> $row['P_Phone'],
+    "address"=> $row['P_Address'],
+    "treatment"=> $row['PT_Name'], 
+    "note"=> $row['P_Note'], 
+    "total"=> $row['PB_Total'], 
+    "recived"=> $row['PB_Receive']
+  );
 
-    }
+$_SESSION["userdata"] = $userdata;
+
 
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en" >
@@ -201,143 +176,92 @@
       </button>
       <a href="Dashboard.php"><button class="app-content-headerButton">Back</button></a>
     </div>
-    <section class="Registarion">
+    <section class="invoice">
+    <form method="POST" action="invoice.php">
+
       <div class="container">
         <br><br>
-      <form method="post">
-        
-        <div class="row">
-          <div class="col-md-6">
-
             <div class="row">
-              <div class="col-md-4">
-                <h4>Name </h4>
-              </div>
-              <div class="col-md-8">
-                <input type="text" name="name" value="<?php echo $name?>">
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-md-4">
-                <h4>S/Name </h4>
-              </div>
-              <div class="col-md-8">
-                <input type="text" name="sname" value="<?php echo $sname?>">
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-md-4">
-                <h4>Gender </h4>
-              </div>
-              <div class="col-md-8">
-                <input type="text" name = "gender" value="<?php echo $gender; ?>">
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-md-4">
-                <h4>Age </h4>
-              </div>
-              <div class="col-md-8">
-                <input type="text" name ="age" value="<?php echo $age?>">
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-md-4">
-                <h4>Phone </h4>
-              </div>
-              <div class="col-md-8">
-                <input type="text" name="phone" value="<?php echo $phone?>">
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-md-4">
-                <h4>Address </h4>
-              </div>
-              <div class="col-md-8">
-                <input type="text" name="address" value="<?php echo $address?>">
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-md-4">
-                <h4>Treatment </h4>
-              </div>
-              <div class="col-md-8">
-                <h4> <?php echo '<p> ' . $treatmentName . ' </p>'?> </h4>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-md-4">
-                <h4>Note</h4>
-              </div>
-              <div class="col-md-8">
-                <input type="text" name = "note" value="<?php echo $note?>">
-              </div>
-            </div>
-
-          </div>
-          <div class="col-md-6">
-            <h3>Treatments</h3>
-            <ul id="UI">
-              <?php
-                // Example data
-                $data = array('CBC', 'BBD', 'ADS', 'CLN');
-
-                // Loop through the data and create a list item for each value
-                foreach ($data as $value) {
-                  echo '<li Class="list"><a href="?value=' . $value . '">' . $value . '</a></li>';
-                }
-              ?>
-              
-            </ul>
-
-          
-          </div>
-
-        </div>
-     
-        <div class="row">
-          <div class="col-md-7">
-            <div class="row">
+              <div class="col-md">
               <?php 
-              if(!empty($errormessage)){
-                echo"
-                <h2>$errormessage </h2>
-                ";
-              }
-              ?>
-            </div>
-            <div class="row">
-               <?php 
-              if(!empty($success)){
-                echo"
-                <h2> $success </h2>
+                echo "<h2> Name: ".$row['P_Name']."</h2>";
+              ?>          
               </div>
-                ";
-              }
-              ?>
             </div>
-          </div>
-          <div class="col-md-5">
-            <div class="row"><?php echo '<h5> Total: '.$total. '</h5>' ?></div>
-            <div class="row"><h5> Recived:   </h5> <input style="margin-left: 15px; padding: 0; " type="text" name="recevid"> </div>
+            
+            <div class="row">
+              <div class="col-md">
+              <?php 
+                echo "<h2> S/Name: ".$row['P_SName']."</h2>";
+              ?>          
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col-md">
+              <?php 
+                echo "<h2> Treatment: ".$row['PT_Name']."</h2>";
+              ?>          
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col-md">
+              <?php 
+                echo "<h2> Note: ".$row['P_Note']."</h2>";
+              ?>
+              </div>
+            </div>
 
             <div class="row">
-              <div class="col-md-6">
-                <a href="index.php"><button class="app-content-headerButton" type="button" id="btn3" role="button">Cancel</button></a>
-              </div>
-              <div class="col-md-6">
-                <button class="app-content-headerButton" type="submit" id="btn2">Submit</button>
+              <div class="col-md">
+              <?php 
+                echo "<h2> Total: ".$row['PB_Total']."</h2>";
+              ?>
               </div>
             </div>
+
+            <div class="row">
+              <div class="col-md">
+              <?php 
+                echo "<h2> Recived: ".$row['PB_Receive']."</h2>";
+              ?>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md">
+              <?php 
+                echo "<h2> Remming: ".$rem."</h2>";
+              ?>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-3">
+                <h2> Pay: </h2>
+              </div>
+              <div class="col-md-9">
+                <input type="text" name="payment" value="<?php $payment; ?>"> 
+              </div>
+            </div>
+                                      <br> 
+            <div class="row">
+              <div class="col-md-2"></div>
+              <div class="col-md">
+              <a href="index.php"><button class="app-content-headerButton" type="button" id="btn5" role="button">Cancel</button></a>
+              </div>
+              <div class="col-md">
+                <a href="index.php"><button class="app-content-headerButton" type="submit" id="btn4" role="button">Submit</button></a>
+              </div>
+              <div class="col-md">
+              <a href ="update.php">
+                <button class="app-content-headerButton" type="button" id="btn5" role="button">Update</button>
+              </a>
+
+            </div>
+              <div class="col-md-2"></div>
+            </div>          
           </div>
-        </div>
       </div>
       </form>
     </section>
@@ -348,6 +272,5 @@
 </div>
 <!-- partial -->
   <script  src="./script.js"></script>
-
 </body>
 </html>
