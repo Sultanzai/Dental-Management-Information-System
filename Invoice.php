@@ -8,8 +8,8 @@
   // Create Connection
   $con = new mysqli($servername, $userName, $password, $database);
    
-    $id=$_GET['id'];
-    echo "Id found:".$id;
+    $id=$_GET["'id'"];
+    $newid = intval($id);
 
   $payment = "";
 
@@ -21,7 +21,7 @@
     $payment = $_POST["payment"];
   }
         // SQL query to get Patient By ID 
-        $sql = "SELECT * FROM `view_patient` WHERE `P_ID` = $id";
+        $sql = "SELECT * FROM `view_patient` WHERE `P_ID` =$newid";
         $res = $con->query($sql);
 
         if(!$res){
