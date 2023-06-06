@@ -7,8 +7,8 @@
 
   // Create Connection
   $con = new mysqli($servername, $userName, $password, $database);
-  
-    $id=$_GET["id"];
+   
+    $id=$_GET['id'];
     echo "Id found:".$id;
 
   $payment = "";
@@ -22,7 +22,7 @@
   }
         // SQL query to get Patient By ID 
         $sql = "SELECT * FROM `view_patient` WHERE `P_ID` = $id";
-        $res = mysqli_query($con, $sql);
+        $res = $con->query($sql);
 
         if(!$res){
           die("Invalid Query: " . $con->error);
@@ -30,7 +30,7 @@
         else{
           $success = "Query pass successfuly ";
         }
-       $row = $res->fetch_assoc();
+        $row = $res->fetch_assoc();
         
         // Remming of the total treatment 
         $rem = $row['PB_Total'] - $row['PB_Receive'];
@@ -62,7 +62,7 @@
             break;            
           }
           else{
-          $newsql = "UPDATE `tbl_patient_balance` SET `PB_Receive`= $totalpay WHERE P_ID = $id;";
+          $newsql = "UPDATE `tbl_patient_balance` SET `PB_Receive`= $totalpay WHERE P_ID = $id";
           $newres = $con->query($newsql);
         }      
             

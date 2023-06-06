@@ -32,10 +32,6 @@
   $success="";
   $currentDate = date('Y-m-d');
  
-  $sqlId = "SELECT MAX(P_ID) AS maxid FROM tbl_patient;";
-  $max = $con->query($sqlId);
-
-
 
   // Check if a value has been clicked
   if (isset($_GET['value'])) {
@@ -58,16 +54,6 @@
     }
   }
 
-  
-  
-  if ($max->num_rows > 0) {
-    // Get the maximum ID from the result set
-    $row = $max->fetch_assoc();
-    $maxres = $row["maxid"];
-    $maxres = $maxres+1;
-    } else {
-        echo "Max ID not Selected";
-    }
 
   // Using POST server request method 
   if($_SERVER['REQUEST_METHOD'] == 'POST'){
@@ -86,11 +72,12 @@
           break;
         }
 
-        // INSERT INTO Patient Table 
+        // Update Patient Table 
         $sql = "UPDATE `tbl_patient` SET `P_Name`='$name',`P_SName`='$sname',`P_Phone`='$phone',`P_Address`='$address',`P_RegDate`='$currentDate',`P_Note`='$note',
         `U_ID`='1',`PT_ID` ='$clicked_value' WHERE `P_ID`='$id'";
         $res = $con->query($sql);
 
+        //Update paitent balance
         $newsql = "UPDATE `tbl_patient_balance` SET `PB_Total`='$total',`PB_Receive`='$recevid',`PB_ReceiveDate`='$currentDate',`U_ID`='1' WHERE `P_ID`='$id'";
         $res2 = $con->query($newsql);
 
