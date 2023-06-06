@@ -124,7 +124,7 @@
          
         </div>
 
-<form method="GET" action="invoice.php"> 
+<form method="get" action="invoice.php"> 
 
 <!----------------------------------------------------------------------------------------
 
@@ -158,7 +158,7 @@
           while($row = $resutl->fetch_assoc()){
               $id = $row["P_ID"];
             echo " 
-            <a href='invoice.php?id=$id'> 
+            <a href=invoice.php?id=$id> 
             <div class= products-row>
               <button class= .cell-more-button>
               </button>

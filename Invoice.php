@@ -7,21 +7,22 @@
 
   // Create Connection
   $con = new mysqli($servername, $userName, $password, $database);
-   
-    $id=$_GET["'id'"];
-    $newid = intval($id);
+
+  $id ="";
+
+  $id = $_GET["id"];
+  echo "ID IS: ".$id;
 
   $payment = "";
-
   $totalpay = "";
-  $errormessage ="";
+  $errormessage = "";
   $success="";
 
  if($_SERVER['REQUEST_METHOD'] == 'POST'){
     $payment = $_POST["payment"];
   }
         // SQL query to get Patient By ID 
-        $sql = "SELECT * FROM `view_patient` WHERE `P_ID` =$newid";
+        $sql = "SELECT * FROM `view_patient` WHERE `P_ID` =$id";
         $res = $con->query($sql);
 
         if(!$res){
@@ -62,7 +63,7 @@
             break;            
           }
           else{
-          $newsql = "UPDATE `tbl_patient_balance` SET `PB_Receive`= $totalpay WHERE P_ID = $id";
+          $newsql = "UPDATE `tbl_patient_balance` SET `PB_Receive`= $totalpay WHERE 'P_ID' =$id";
           $newres = $con->query($newsql);
         }      
             
@@ -75,10 +76,9 @@
         }
         while(false);
 
-
   // SESSIONS Data and initilizaions 
   $userdata = array(
-    "id"=> $id, 
+    "newid"=> $id, 
     "name"=> $row['P_Name'], 
     "sname"=> $row['P_SName'], 
     "phone"=> $row['P_Phone'],
@@ -177,6 +177,8 @@ $_SESSION["userdata"] = $userdata;
       <a href="Dashboard.php"><button class="app-content-headerButton">Back</button></a>
     </div>
     <section class="invoice">
+    <form method="POST" action="invoice.php">
+
       <div class="container">
         <br><br>
             <div class="row">
@@ -233,14 +235,13 @@ $_SESSION["userdata"] = $userdata;
               ?>
               </div>
             </div>
-        <form method="POST" action="invoice.php">
 
             <div class="row">
               <div class="col-md-3">
                 <h2> Pay: </h2>
               </div>
               <div class="col-md-9">
-                <input type="text" name="payment" value="<?php echo $payment; ?>"> 
+                <input type="text" name="payment" value="<?php $payment; ?>"> 
               </div>
             </div>
                                       <br> 
@@ -261,8 +262,8 @@ $_SESSION["userdata"] = $userdata;
               <div class="col-md-2"></div>
             </div>          
           </div>
-        </form>
       </div>
+      </form>
     </section>
 
 

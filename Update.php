@@ -18,7 +18,7 @@
 
   $maxres ="";
 
-  $id = $userdata['id'];
+  $id = $userdata['newid'];
   $name =$userdata['name'];
   $sname = $userdata['sname'];
   $phone = $userdata['phone'];
