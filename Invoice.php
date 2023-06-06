@@ -62,7 +62,7 @@
             break;            
           }
           else{
-          $newsql = "UPDATE `tbl_patient_balance` SET `PB_Receive`= $totalpay WHERE P_ID = $id";
+          $newsql = "UPDATE `tbl_patient_balance` SET `PB_Receive`= $totalpay WHERE 'P_ID' = $id";
           $newres = $con->query($newsql);
         }      
             
@@ -78,7 +78,7 @@
 
   // SESSIONS Data and initilizaions 
   $userdata = array(
-    "id"=> $id, 
+    "newid"=> $id, 
     "name"=> $row['P_Name'], 
     "sname"=> $row['P_SName'], 
     "phone"=> $row['P_Phone'],
