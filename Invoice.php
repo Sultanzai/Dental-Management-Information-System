@@ -1,107 +1,94 @@
-<?php
-  session_start();
-  $servername = "localhost";
-  $userName= "root";
-  $password = "";
-  $database = "dms";
+<?php 
+ session_start();
+ $servername = "localhost";
+ $userName= "root";
+ $password = "";
+ $database = "dms";
 
-  // Create Connection
-  $con = new mysqli($servername, $userName, $password, $database);
-
-  $id ="";
+ // Create Connection
+ $con = new mysqli($servername, $userName, $password, $database);
 
 
-  $payment = "";
-  $totalpay = "";
-  $rem = "";
+$id ="";
+$name ="";
+$sname ="";
+$note ="";
+$tname ="";
+$total ="";
+$recived ="";
+$remming ="";
 
-  $name="";
-  $sname = "";
-  $tname="";
 
-  $recived = "";
-  $total = "";
 
-  $errormessage = "";
-  $success="";
 
- if($_SERVER['REQUEST_METHOD'] == 'GET'){
+ $error="";
+ $success="";
+
+ if($_SERVER['REQUEST_METHOD']=='GET'){
+  // GET METHOD TO SHOW CLIENT RECORD
+
+  if(!isset($_GET["id"])){
+    header(index.php);
+    exit;
+  }
 
   $id = $_GET["id"];
-  echo "ID IS: ".$id;
     
-  
         // SQL query to get Patient By ID 
-        $sql = "SELECT * FROM `view_patient` WHERE `P_ID` =$id";
+        $sql = "SELECT * FROM view_patient WHERE P_ID =$id";
         $res = $con->query($sql);
         $row = $res->fetch_assoc();
-
-        if(!$res){
-          die("Invalid Query: " . $con->error);
+        
+        if(!$row){
+          header(DMS/dist/index.php);
+          exit;
         }
-        else{
-          $success = "Query pass successfuly ";
-        }
-
         $name =$row['P_Name'];
-        $recived = $row['PB_Receive'];
-        $total = $row['PB_Total'];
+        $sname =$row['P_SName'];
+        $note =$row['P_Note'];
+        $tname =$row['PT_Name'];
+        $total =$row['PB_Total'];
+        $recived =$row['PB_Receive'];
 
-        // Remming of the total treatment 
-        $rem = $row['PB_Total'] - $row['PB_Receive'];
-      }
-      else{
+        $remming =$total-$recived;
 
-        $payment = $_POST["payment"];
-      
-        do{
-          if(empty($payment)){
-          $errormessage= "Payment field is empty";
+
+ }
+ else{
+    //Post method to get the data form 
+    $id = $_GET["id"];
+    $payment = $_POST["payment"];
+    $recived = $_GET["recived"];
+
+    do{
+      if(empty($id)||empty($payment)){
+          $error ="Faild to get paitent record".$con->error;
+          echo "faield to get patient record";
           break;
-          }
-
-          //Query to insert into payment
-
-
-          if($totalpay>$recived || $payment<0){
-            echo "<script>
-            alert('Invalid Input !');
-          </script>";
-            break;
-          }
-
-          //String conversion and sum of the recive payment 
-          $totalpay = intval($payment) + intval($recived);
-
-          $newsql = "UPDATE `tbl_patient_balance` SET `PB_Receive`= $totalpay WHERE 'P_ID' =$id";
-          $newres = $con->query($newsql);
- 
-          if(!$newres){
-            $errormessage = "invalid Query: ". $con->error;
-            break;
-          }
-
-          header("location: /DMS/dist/index.php");
-        }
-        while(false);
       }
+  
+      //String conversion and sum of the recive payment 
+      $totalpay = intval($payment) + intval($recived);
+      //Check if user enter the valid number
       
-  // SESSIONS Data and initilizaions 
-//   $userdata = array(
-//     "newid"=> $id, 
-//     "name"=> $row['P_Name'], 
-//     "sname"=> $row['P_SName'], 
-//     "phone"=> $row['P_Phone'],
-//     "address"=> $row['P_Address'],
-//     "treatment"=> $row['PT_Name'], 
-//     "note"=> $row['P_Note'], 
-//     "total"=> $row['PB_Total'], 
-//     "recived"=> $row['PB_Receive']
-//   );
-
-// $_SESSION["userdata"] = $userdata;
 
 
+      $newsql = "UPDATE tbl_patient_balance SET PB_Receive = '$totalpay' WHERE P_ID = '$id'";
+      $newres = $con->query($newsql);
+
+      if(!$newres){
+        $error ="Error while updating paitent balance".$con->error;
+        echo "Error while updating paitent balance";
+        break;
+      }
+
+      $success="Invoice added Sucessfully";
+      echo $success;
+      header("location: /DMS/dist/index.php");
+      exit;
+
+    }while(false);
+ }
 ?>
 
 <!DOCTYPE html>
@@ -187,7 +174,6 @@
       <a href="Dashboard.php"><button class="app-content-headerButton">Back</button></a>
     </div>
     <section class="invoice">
-    <form method="POST" action="invoice.php">
 
       <div class="container">
         <br><br>
@@ -202,7 +188,7 @@
             <div class="row">
               <div class="col-md">
               <?php 
-                echo "<h2> S/Name: </h2>";
+                echo "<h2> S/Name:".$sname." </h2>";
               ?>          
               </div>
             </div>
@@ -210,7 +196,7 @@
             <div class="row">
               <div class="col-md">
               <?php 
-                echo "<h2> Treatment: </h2>";
+                echo "<h2> Treatment: ".$tname."</h2>";
               ?>          
               </div>
             </div>
@@ -218,7 +204,7 @@
             <div class="row">
               <div class="col-md">
               <?php 
-                echo "<h2> Note: </h2>";
+                echo "<h2> Note: ".$note."</h2>";
               ?>
               </div>
             </div>
@@ -241,17 +227,19 @@
             <div class="row">
               <div class="col-md">
               <?php 
-                echo "<h2> Remming: ".$rem."</h2>";
+                echo "<h2> Remming: ".$remming."</h2>";
               ?>
               </div>
             </div>
 
+        <form method="post">
             <div class="row">
               <div class="col-md-3">
                 <h2> Pay: </h2>
               </div>
               <div class="col-md-9">
-                <input type="text" name="payment" value="<?php $payment; ?>"> 
+
+                <input type="text" name="payment" value="<?php $payment?>"> 
               </div>
             </div>
                                       <br> 
@@ -270,10 +258,11 @@
 
             </div>
               <div class="col-md-2"></div>
+        </form>
+
             </div>          
           </div>
       </div>
-      </form>
     </section>
 
 

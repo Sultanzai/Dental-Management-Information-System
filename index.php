@@ -158,7 +158,7 @@
           while($row = $resutl->fetch_assoc()){
               $id = $row["P_ID"];
             echo " 
-            <a href='invoice.php?id=$row[P_ID]&name=$row[P_Name]&sname=$row[P_SName]&note=$row[P_Note]& ptname=$row[PT_Name]&pttotal=$row[PB_Total]&ptrecevid=$row[PB_Receive]'> 
+            <a href='invoice.php?id=$row[P_ID]&recived=$row[PB_Receive]'> 
             <div class= products-row>
               <button class= .cell-more-button>
               </button>
