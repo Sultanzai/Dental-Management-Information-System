@@ -1,5 +1,5 @@
 <?php
-  session_start();
+  //session_start();
   $servername = "localhost";
   $userName= "root";
   $password = "";
@@ -7,53 +7,41 @@
 
   // Create Connection
   $con = new mysqli($servername, $userName, $password, $database);
-
-  $id ="";
-
+   $id = "";
+  if(isset($_GET['id'])){
+    $id=$_GET['id'];
+    echo "Id Set:".$id;
+  }else{
+    echo "Id faield to set:".$id;
+  }
+    
+    
 
   $payment = "";
+
   $totalpay = "";
-  $rem = "";
-
-  $name="";
-  $sname = "";
-  $tname="";
-
-  $recived = "";
-  $total = "";
-
-  $errormessage = "";
+  $errormessage ="";
   $success="";
 
- if($_SERVER['REQUEST_METHOD'] == 'GET'){
-
-  $id = $_GET["id"];
-  echo "ID IS: ".$id;
-    
-  
+ if($_SERVER['REQUEST_METHOD'] == 'POST'){
+    $payment = $_POST["payment"];
+  }
         // SQL query to get Patient By ID 
-        $sql = "SELECT * FROM `view_patient` WHERE `P_ID` =$id";
-        $res = $con->query($sql);
-        $row = $res->fetch_assoc();
+    $sql = "SELECT * FROM `view_patient` WHERE `P_ID` = $id";
+    $res = $con->query($sql);
 
         if(!$res){
-          die("Invalid Query: " . $con->error);
+          die("Invalid Query: " .$con->error);
         }
         else{
           $success = "Query pass successfuly ";
         }
-
-        $name =$row['P_Name'];
-        $recived = $row['PB_Receive'];
-        $total = $row['PB_Total'];
-
+        $row = $res->fetch_assoc();
+        
         // Remming of the total treatment 
         $rem = $row['PB_Total'] - $row['PB_Receive'];
-      }
-      else{
 
-        $payment = $_POST["payment"];
-      
+
         do{
           if(empty($payment)){
           $errormessage= "Payment field is empty";
@@ -62,30 +50,46 @@
 
           //Query to insert into payment
 
-
-          if($totalpay>$recived || $payment<0){
+          if($totalpay>=$row['PB_Receive'] || $payment<0){
             echo "<script>
-            alert('Invalid Input !');
+            alert('Invalid Input!');
           </script>";
             break;
           }
 
           //String conversion and sum of the recive payment 
-          $totalpay = intval($payment) + intval($recived);
+          $totalpay = $payment +$row["PB_Receive"];
 
-          $newsql = "UPDATE `tbl_patient_balance` SET `PB_Receive`= $totalpay WHERE 'P_ID' =$id";
-          $newres = $con->query($newsql);
- 
+          if($totalpay >$row['PB_Total']){
+            echo "<script>
+                    alert('Invalid Amount!');
+                  </script>";
+            break;            
+          }
+          else{
+            echo "Id in Update phase:".$id;
+          $newsql = "UPDATE `tbl_patient_balance` SET `PB_Receive`= $totalpay WHERE P_ID = $id";
+          // $newres = $con->query($newsql);
+          if($con->query($newsql)===TRUE){
+            echo "<script>
+                    alert('Data has been update successfuly!');
+                  </script>";
+          }
+        }      
+            
           if(!$newres){
             $errormessage = "invalid Query: ". $con->error;
+            echo "<script>
+                    alert('Faild in update query!');
+                  </script>";
             break;
           }
 
           header("location: /DMS/dist/index.php");
         }
         while(false);
-      }
-      
+
+
   // SESSIONS Data and initilizaions 
 //   $userdata = array(
 //     "newid"=> $id, 
@@ -187,38 +191,36 @@
       <a href="Dashboard.php"><button class="app-content-headerButton">Back</button></a>
     </div>
     <section class="invoice">
-    <form method="POST" action="invoice.php">
-
       <div class="container">
         <br><br>
             <div class="row">
               <div class="col-md">
               <?php 
-                echo "<h2> Name: ".$name."</h2>";
+                echo "<h2> Name: ".$row['P_Name']."</h2>";
               ?>          
               </div>
             </div>
-
+            
             <div class="row">
               <div class="col-md">
               <?php 
-                echo "<h2> S/Name: </h2>";
+                echo "<h2> S/Name: ".$row['P_SName']."</h2>";
               ?>          
               </div>
             </div>
-
+            
             <div class="row">
               <div class="col-md">
               <?php 
-                echo "<h2> Treatment: </h2>";
+                echo "<h2> Treatment: ".$row['PT_Name']."</h2>";
               ?>          
               </div>
             </div>
-
+            
             <div class="row">
               <div class="col-md">
               <?php 
-                echo "<h2> Note: </h2>";
+                echo "<h2> Note: ".$row['P_Note']."</h2>";
               ?>
               </div>
             </div>
@@ -226,7 +228,7 @@
             <div class="row">
               <div class="col-md">
               <?php 
-                echo "<h2> Total: ".$total."</h2>";
+                echo "<h2> Total: ".$row['PB_Total']."</h2>";
               ?>
               </div>
             </div>
@@ -234,7 +236,7 @@
             <div class="row">
               <div class="col-md">
               <?php 
-                echo "<h2> Recived: ".$recived."</h2>";
+                echo "<h2> Recived: ".$row['PB_Receive']."</h2>";
               ?>
               </div>
             </div>
@@ -245,13 +247,14 @@
               ?>
               </div>
             </div>
+        <form method="POST" action="invoice.php">
 
             <div class="row">
               <div class="col-md-3">
                 <h2> Pay: </h2>
               </div>
               <div class="col-md-9">
-                <input type="text" name="payment" value="<?php $payment; ?>"> 
+                <input type="text" name="payment" value="<?php echo $payment?>"> 
               </div>
             </div>
                                       <br> 
@@ -272,12 +275,12 @@
               <div class="col-md-2"></div>
             </div>          
           </div>
+        </form>
       </div>
-      </form>
     </section>
 
 
-
+    
   </div>
 </div>
 <!-- partial -->
