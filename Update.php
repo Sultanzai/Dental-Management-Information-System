@@ -62,8 +62,8 @@
     $phone = $_POST["phone"];
     $address = $_POST["address"];
     $note = $_POST["note"];
-    $recevid = $_POST["recevid"];
-
+    $recevid = $_POST["recevid"];    
+    $total = $_POST["total"];
   
 
       do {
@@ -73,8 +73,8 @@
         }
 
         // Update Patient Table 
-        $sql = "UPDATE `tbl_patient` SET `P_Name`='$name',`P_SName`='$sname',`P_Phone`='$phone',`P_Address`='$address',`P_RegDate`='$currentDate',`P_Note`='$note',
-        `U_ID`='1',`PT_ID` ='$clicked_value' WHERE `P_ID`='$id'";
+        $sql = "UPDATE `tbl_patient` SET `P_Name`='$name',`P_SName`='$sname',`P_Phone`='$phone',`P_Address`='$address',`P_RegDate`='$currentDate',`P_Note`='$note'
+         WHERE `P_ID`='$id'";
         $res = $con->query($sql);
 
         //Update paitent balance
@@ -304,8 +304,8 @@
             </div>
           </div>
           <div class="col-md-5">
-            <div class="row"><?php echo '<h5> Total: '.$total. '</h5>' ?></div>
-            <div class="row"><h5> Recived:   </h5> <input style="margin-left: 15px; padding: 0; " type="text" name="recevid" value="<?php echo"$recevid"; ?>"> </div>
+          <div class="row"><h5> Total Amount:   </h5> <input style="margin-left: 15px; padding: 0; " type="text" name="total" value="<?php echo"$total"; ?>"> </div>
+          <br>  <div class="row"><h5> Recived:   </h5> <input style="margin-left: 15px; padding: 0; " type="text" name="recevid" value="<?php echo"$recevid"; ?>"> </div>
 
             <div class="row">
               <div class="col-md-6">
