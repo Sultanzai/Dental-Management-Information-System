@@ -168,7 +168,7 @@ $_SESSION["userdata"] = $userdata;
 
     <!-- Header Product with add product-->
     <div class="app-content-header">
-      <h1 class="app-content-headerText">Patient Registration</h1>
+      <h1 class="app-content-headerText">Patient Invoice</h1>
       <button class="mode-switch" title="Switch Theme">
           <defs></defs>
           <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
